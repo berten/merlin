@@ -26,4 +26,5 @@ __all__ = [
            "showmethemoney",
            "email",
            "call",
+    "forcecall",
            ]
