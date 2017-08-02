@@ -20,6 +20,7 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  
 from datetime import datetime
+import time
 from math import ceil
 import re
 import sys
@@ -53,6 +54,7 @@ class Updates(Base):
     planets = Column(Integer)
     alliances = Column(Integer)
     timestamp = Column(DateTime, default=datetime.utcnow())
+    unixtime = Column(Integer, default=time.time())
     clusters = Column(Integer, default=0)
     c200 = Column(Integer, default=0)
     ter = Column(Integer, default=0)
@@ -109,7 +111,7 @@ class Updates(Base):
         if diff > 1:
             retstr = "Tick %s was %s ticks ago "  % (self.id, diff,)
         retstr += "(%s -" % (self.age,)
-        retstr += " %s)" % (self.timestamp.strftime("%a %d/%m %H:%M"),)
+        retstr += " %s)" % (self.timestamp.strftime("%a %d/%m %H:%M UTC"),)
         return retstr
 
 class Cluster(Base):
@@ -1343,6 +1345,7 @@ class User(Base):
     
     @validates('passwd')
     def valid_passwd(self, key, passwd):
+        passwd = encode(passwd)
         if Config.getboolean("Misc", "bcrypt"):
             return bcrypt.hashpw(passwd, bcrypt.gensalt())
         else:
@@ -1878,6 +1881,7 @@ class DevScan(Base):
     core = Column(Integer)
     covert_op = Column(Integer)
     mining = Column(Integer)
+    pop = Column(Integer)
     
     def travel_str(self):
         return "eta -%s" %(self.travel,)
@@ -1886,103 +1890,120 @@ class DevScan(Base):
         level = self.infrastructure
         if level==0:
             return "20 constructions"
-        if level==1:
+        elif level==1:
             return "50 constructions"
-        if level==2:
+        elif level==2:
             return "100 constructions"
-        if level==3:
+        elif level==3:
             return "150 constructions"
-        if level==4:
+        elif level==4:
             return "200 constructions"
-        if level==5:
+        elif level==5:
             return "300 constructions"
     
     def hulls_str(self):
         level = self.hulls
         if level==1:
             return "FI/CO"
-        if level==2:
+        elif level==2:
             return "FR/DE"
-        if level==3:
+        elif level==3:
             return "CR/BS"
     
     def waves_str(self):
         level = self.waves
         if level==0:
             return "Planet"
-        if level==1:
+        elif level==1:
             return "Landing"
-        if level==2:
+        elif level==2:
             return "Development"
-        if level==3:
+        elif level==3:
             return "Unit"
-        if level==4:
+        elif level==4:
             return "News"
-        if level==5:
+        elif level==5:
             return "Incoming"
-        if level==6:
+        elif level==6:
             return "JGP"
-        if level==7:
+        elif level==7:
             return "Advanced Unit"
     
     def core_str(self):
-        return ("1000","3500","6000","9000","12000")[self.core] + " ept"
+        return ("1000","4000","8000","15000","25000")[self.core] + " ept"
     
     def covop_str(self):
         level = self.covert_op
         if level==0:
-            return "Research hack"
-        if level==1:
-            return "Lower stealth"
-        if level==2:
-            return "Blow up roids"
-        if level==3:
-            return "Blow up ships"
-        if level==4:
-            return "Blow up guards"
-        if level==5:
-            return "Blow up amps/dists"
-        if level==6:
-            return "Resource hacking (OMG!)"
-        if level==7:
-            return "Blow up strucs"
+            return "Exploding Fist"
+        elif level==1:
+            return "Agent Defection"
+        elif level==2:
+            return "Security Guard Defection"
+        elif level==3:
+            return "Hacking : Science Database"
+        elif level==4:
+            return "Warp Drive Manipulation"
+        elif level==5:
+            return "Information Black-out"
+        elif level==6:
+            return "Havoc"
+        elif level==7:
+            return "Hacking : Resource Transfers"
+        elif level==8:
+            return "Government Subversion"
     
     def mining_str(self):
         level = self.mining
         if level==0:
             return "100 roids (scanner!)"
-        if level==1:
+        elif level==1:
             return "200 roids"
-        if level==2:
+        elif level==2:
             return "300 roids"
-        if level==3:
+        elif level==3:
             return "500 roids"
-        if level==4:
+        elif level==4:
             return "750 roids"
-        if level==5:
+        elif level==5:
             return "1k roids"
-        if level==6:
+        elif level==6:
             return "1250 roids"
-        if level==7:
+        elif level==7:
             return "1500 roids"
-        if level==8:
+        elif level==8:
             return "Jan 1. 1900"
-        if level==9:
+        elif level==9:
             return "2500 roids"
-        if level==10:
+        elif level==10:
             return "3000 roids"
-        if level==11:
+        elif level==11:
             return "3500 roids"
-        if level==12:
+        elif level==12:
             return "4500 roids"
-        if level==13:
+        elif level==13:
             return "5500 roids"
-        if level==14:
+        elif level==14:
             return "6500 roids"
-        if level==15:
+        elif level==15:
             return "8000 roids"
-        if level==16:
+        elif level==16:
             return "top10 or dumb"
+
+    def pop_str(self):
+        level = self.pop
+        if level==0:
+            return "50%"
+        elif level==1:
+            return "60%"
+        elif level==2:
+            return "70%"
+        elif level==3:
+            return "80%"
+        elif level==4:
+            return "90%"
+        elif level==5:
+            return "100%"
     
     @property
     def total(self):
@@ -1995,7 +2016,8 @@ class DevScan(Base):
         
     def __str__(self):
         reply = " Travel: %s, Infrastructure: %s, Hulls: %s," % (self.travel_str(),self.infra_str(),self.hulls_str(),)
-        reply+= " Waves: %s, Core: %s, Covop: %s, Mining: %s" % (self.waves_str(),self.core_str(),self.covop_str(),self.mining_str(),)
+        reply+= " Waves: %s, Core: %s, Covop: %s, Mining: %s," % (self.waves_str(),self.core_str(),self.covop_str(),self.mining_str(),)
+        reply+= " Population: %s" % (self.pop_str(),)
         reply+= "\n"
         reply+= "Structures: LFac: %s, MFac: %s, HFac: %s, Amp: %s," % (self.light_factory,self.medium_factory,self.heavy_factory,self.wave_amplifier,)
         reply+= " Dist: %s, MRef: %s, CRef: %s, ERef: %s," % (self.wave_distorter,self.metal_refinery,self.crystal_refinery,self.eonium_refinery,)
@@ -2251,3 +2273,92 @@ class SMS(Base):
     mode = Column(String(255))
 SMS.sender = relation(User, primaryjoin=SMS.sender_id==User.id)
 SMS.receiver = relation(User, primaryjoin=SMS.receiver_id==User.id)
+
+# ########################################################################### #
+# #############################    GAME DATA    ############################# #
+# ########################################################################### #
+
+class Construction(Base):
+    __tablename__ = 'constructions'
+    cu = Column(Integer)
+    metal = Column(Integer)
+    crystal = Column(Integer)
+    eonium = Column(Integer)
+    name = Column(String(255), primary_key=True)
+    description = Column(String(255))
+
+class Research(Base):
+    __tablename__ = 'research'
+    branch = Column(Integer)
+    level = Column(Integer)
+    rp = Column(Integer)
+    name = Column(String(255), primary_key=True)
+    description = Column(String(255))
+
+class Race(Base):
+    __tablename__ = 'races'
+    short_name = Column(String(255), primary_key=True)
+    full_name = Column(String(255))
+    description = Column(String(1023))
+    base_cu = Column(Integer)
+    base_rp = Column(Integer)
+    trade_tax = Column(Integer)
+    max_stealth = Column(Integer)
+    stealth_growth = Column(Integer)
+    production = Column(Integer)
+    salvage = Column(Integer)
+
+class Gov(Base):
+    __tablename__ = 'govs'
+    name = Column(String(255), primary_key=True)
+    description = Column(String(1023))
+    alert = Column(String(255))
+    construction = Column(String(255))
+    mining = Column(String(255))
+    production_cost = Column(String(255))
+    production_time = Column(String(255))
+    research = Column(String(255))
+
+    amod = Column(Float)
+    cmod = Column(Float)
+    mmod = Column(Float)
+    pcmod = Column(Float)
+    ptmod = Column(Float)
+    rmod = Column(Float)
+
+    def gen_mods(self):
+        def calc_mod(s):
+            if s:
+                m = re.match("(\d+)% s?(lower)?", s)
+                mod = float("1." + m.group(1))
+                if m.group(2):
+                    mod = 1/mod
+            else:
+                mod = 1
+            return mod
+
+        self.amod = calc_mod(self.alert)
+        self.cmod = calc_mod(self.construction)
+        self.mmod = calc_mod(self.mining)
+        self.pcmod = calc_mod(self.production_cost)
+        self.ptmod = calc_mod(self.production_time)
+        self.rmod = calc_mod(self.research)
+
+class GameSetup(Base):
+    __tablename__ = 'game_setup'
+    key = Column(String(255), primary_key=True)
+    value = Column(String(255))
+
+    @staticmethod
+    def get(key):
+        return session.query(GameSetup).filter_by(key=key).first().value
+
+    @staticmethod
+    def getint(key):
+        v = session.query(GameSetup).filter_by(key=key).first().value
+        return int(v) if v and v.isdigit() else None
+
+    @staticmethod
+    def refresh():
+        from gamedata import loadfromapi
+        loadfromapi(Config.get("URL", "api")+"?settings", GameSetup)

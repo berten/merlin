@@ -87,6 +87,7 @@
 <tr><td> raw </td><td>  </td><td> Send a raw message to the server. </td></tr>
 <tr><td> reboot </td><td>  </td><td> Quit IRC reboot, reload and reconnect </td></tr>
 <tr><td> reload </td><td>  </td><td> Dynamically reload the Core and Hooks </td></tr>
+<tr><td> reloadstats </td><td>  </td><td> Reload ship stats </td></tr>
 <tr><td> remchan </td><td> remchan &lt;chan&gt; </td><td>  </td></tr>
 <tr><td> remquote </td><td> remquote &lt;quote to remove&gt; </td><td>  </td></tr>
 <tr><td> remslogan </td><td> remslogan &lt;slogan to remove&gt; </td><td>  </td></tr>
@@ -96,6 +97,7 @@
 <tr><td> roidsave </td><td> roidsave &lt;roids&gt; &lt;ticks&gt; [mining_bonus] </td><td> Tells you how much value will be mined by a number of roids in that many ticks. </td></tr>
 <tr><td> rprod </td><td> rprod &lt;ship&gt; &lt;ticks&gt; &lt;factories&gt; [population] [government] </td><td> Calculate how many &lt;ship&gt; you can build in &lt;ticks&gt; with &lt;factories&gt;. Specify population and/or government for bonuses. </td></tr>
 <tr><td> scans </td><td> scans &lt;x:y:z&gt; </td><td>  </td></tr>
+<tr><td> scannerhelp </td><td> scannerhelp [nick] </td><td> Help for scanners </td></tr>
 <tr><td> seagal </td><td> seagal &lt;x:y:z&gt; [sum] </td><td>  </td></tr>
 <tr><td> searchdef </td><td> searchdef [number] &lt;ship&gt; </td><td>  </td></tr>
 <tr><td> search </td><td> search &lt;alliance|nick&gt; </td><td> Search for a planet by alliance or nick. </td></tr>
