@@ -49,7 +49,7 @@ class eff(loadable):
                 num, ship.name, self.num2short(num*ship.total_cost/PA.getint("numbers", "ship_value")),
                 killed, self.num2short(killed*PA.getint("numbers", "roid_value")),))
             return
-        if ship.t1 == "Struct":
+        if ship.t1[:6] == "Struct":
             killed = total_damage/500
             message.reply("%s %s (%s) will destroy Structure: %s (%s)" % (
                 num, ship.name, self.num2short(num*ship.total_cost/PA.getint("numbers", "ship_value")),
@@ -60,7 +60,7 @@ class eff(loadable):
             message.reply("%s does not have any targets in that category (%s)" % (ship.name,target))
             return
         reply="%s %s (%s) hitting %s will " % (num, ship.name,self.num2short(num*ship.total_cost/PA.getint("numbers", "ship_value")),target_class)
-        if ship.type.lower() == "norm" or ship.type.lower() == 'cloak':
+        if ship.type.lower()[:4] == "norm" or ship.type.lower() == 'cloak':
             reply+="destroy "
         elif ship.type.lower() == "emp":
             reply+="hug "
