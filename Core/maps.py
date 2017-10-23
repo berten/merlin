@@ -1710,6 +1710,7 @@ class Scan(Base):
 
     def addPlanetToCalc(self, bcalc, target, planetNumber):
         for unitscan in self.units:
+
             bcalc += "%s_%d_%d=%d&" % (
                 ("att", "def",)[target], planetNumber, unitscan.ship_id - 1, unitscan.amount,)
         bcalc += "%s_planet_value_%d=%d&" % (

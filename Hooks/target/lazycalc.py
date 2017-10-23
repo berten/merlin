@@ -42,7 +42,7 @@ class lazycalc(loadable):
 
                 if scan and (int(tick) <= scan.tick + 12):
                     print "scan found and has correct tick"
-                    url = scan.addPlanetToCalc(url, True, i)
+                    url = scan.addPlanetToCalc(url, False, i)
                 else:
                     message.reply("Missing a scan for %d:%d:%d" % (
                         planet.x, planet.y, planet.z))
