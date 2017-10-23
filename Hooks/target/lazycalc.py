@@ -37,14 +37,16 @@ class lazycalc(loadable):
         i = 1
         for coord in re.findall(loadable.coord, params.group(0)):
             planet = Planet.load(coord[0], coord[2], coord[4])
-            i = i + 1
             if planet:
                 scan = planet.scan("A")
+
                 if scan and (int(tick) <= scan.tick + 12):
-                    scan.addPlanetToCalc(url, True, i)
+                    print "scan found and has correct tick"
+                    url = scan.addPlanetToCalc(url, True, i)
                 else:
                     message.reply("Missing a scan for %d:%d:%d" % (
-                    planet.x, planet.y, planet.z))
+                        planet.x, planet.y, planet.z))
                     break
+            i = i + 1
 
         message.reply("Calc: %s" % url)
