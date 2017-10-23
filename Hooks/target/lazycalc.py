@@ -35,7 +35,7 @@ class lazycalc(loadable):
         tick = Updates.current_tick()
         url = Config.get("URL", "bcalc")
         i = 1
-        for coord in re.findall(loadable.coord, params.group(2)):
+        for coord in re.findall(loadable.coord, params.group(0)):
             planet = Planet.load(coord[0], coord[2], coord[4])
             i = i + 1
             if planet:
