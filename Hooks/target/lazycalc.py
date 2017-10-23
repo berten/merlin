@@ -20,6 +20,7 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 import re
+import tinyurl
 
 from Core.config import Config
 from Core.loadable import loadable, route, require_user
@@ -36,6 +37,7 @@ class lazycalc(loadable):
         url = Config.get("URL", "bcalc")
         i = 1
         for coord in re.findall(loadable.coord, params.group(0)):
+            print url
             planet = Planet.load(coord[0], coord[2], coord[4])
             if planet:
                 scan = planet.scan("A")
@@ -49,4 +51,4 @@ class lazycalc(loadable):
                     break
             i = i + 1
 
-        message.reply("Calc: %s" % url)
+        message.reply("Calc: %s" % (tinyurl.create_one("%s&att_fleets=%d" % (url, i-1))))
