@@ -1705,31 +1705,37 @@ class Scan(Base):
     def bcalc(self, target):
         if self.scantype not in ("U","A",):
             return
-        
-        bcalc = Config.get("URL","bcalc")
+
+        return self.addPlanetToCalc(Config.get("URL", "bcalc"), target, 1)
+
+    def addPlanetToCalc(self, bcalc, target, planetNumber):
         for unitscan in self.units:
-            bcalc += "%s_1_%d=%d&" % (("att", "def",)[target], unitscan.ship_id - 1, unitscan.amount,)
-        bcalc += "%s_planet_value_1=%d&" % (("att", "def",)[target], self.planet.value,)
-        bcalc += "%s_planet_score_1=%d&" % (("att", "def",)[target], self.planet.score,)
-        bcalc += "%s_coords_x_1=%d&" % (("att", "def",)[target], self.planet.x,)
-        bcalc += "%s_coords_y_1=%d&" % (("att", "def",)[target], self.planet.y,)
-        bcalc += "%s_coords_z_1=%d&" % (("att", "def",)[target], self.planet.z,)
-        
+            bcalc += "%s_%d_%d=%d&" % (
+                ("att", "def",)[target], planetNumber, unitscan.ship_id - 1, unitscan.amount,)
+        bcalc += "%s_planet_value_%d=%d&" % (
+            ("att", "def",)[target], planetNumber, self.planet.value,)
+        bcalc += "%s_planet_score_%d=%d&" % (
+            ("att", "def",)[target], planetNumber, self.planet.score,)
+        bcalc += "%s_coords_x_%d=%d&" % (("att", "def",)[target], planetNumber, self.planet.x,)
+        bcalc += "%s_coords_y_%d=%d&" % (("att", "def",)[target], planetNumber, self.planet.y,)
+        bcalc += "%s_coords_z_%d=%d&" % (("att", "def",)[target], planetNumber, self.planet.z,)
         if target:
             pscan = self.planet.scan("P")
             if pscan and pscan.planetscan.size == self.planet.size:
-                bcalc += "def_metal_asteroids=%d&" % (pscan.planetscan.roid_metal,)
-                bcalc += "def_crystal_asteroids=%d&" % (pscan.planetscan.roid_crystal,)
-                bcalc += "def_eonium_asteroids=%d&" % (pscan.planetscan.roid_eonium,)
+                bcalc += "def_metal_asteroids=%d&" % (
+                pscan.planetscan.roid_metal,)
+                bcalc += "def_crystal_asteroids=%d&" % (
+                pscan.planetscan.roid_crystal,)
+                bcalc += "def_eonium_asteroids=%d&" % (
+                pscan.planetscan.roid_eonium,)
             else:
                 bcalc += "def_metal_asteroids=%d&" % (self.planet.size,)
-            
+
             dscan = self.planet.scan("D")
             if dscan:
                 bcalc += "def_structures=%d&" % (dscan.devscan.total,)
-        
         return bcalc
-    
+
     @property
     def total_hostile(self):
         if self.scantype not in ("J",):

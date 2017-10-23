@@ -19,14 +19,32 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
-# List of package modules
-__all__ = [
-    "bitches",
-    "status",
-    "book",
-    "unbook",
-    "gangbang",
-    "attack",
-    "editattack",
-    "lazycalc",
-]
+import re
+
+from Core.config import Config
+from Core.loadable import loadable, route, require_user
+from Core.maps import Updates, Planet
+
+
+class lazycalc(loadable):
+    usage = " x:y:z x2:y2:z2"
+
+    @route(r"([. :\-\d,]+)", access="half")
+    @require_user
+    def execute(self, message, user, params):
+        tick = Updates.current_tick()
+        url = Config.get("URL", "bcalc")
+        i = 1
+        for coord in re.findall(loadable.coord, params.group(2)):
+            planet = Planet.load(coord[0], coord[2], coord[4])
+            i = i + 1
+            if planet:
+                scan = planet.scan("A")
+                if scan and (int(tick) <= scan.tick + 12):
+                    scan.addPlanetToCalc(url, True, i)
+                else:
+                    message.reply("Missing a scan for %d:%d:%d" % (
+                    planet.x, planet.y, planet.z))
+                    break
+
+        message.reply("Calc: %s" % url)
