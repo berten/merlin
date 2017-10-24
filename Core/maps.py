@@ -1706,20 +1706,31 @@ class Scan(Base):
         if self.scantype not in ("U","A",):
             return
 
+        def bcalc(self, target):
+            if self.scantype not in ("U","A",):
+                return
+
         return self.addPlanetToCalc(Config.get("URL", "bcalc"), target, 1)
 
-    def addPlanetToCalc(self, bcalc, target, planetNumber):
-        for unitscan in self.units:
+    def addPlanetToCalc(self, bcalc, target, planetnumber, clazz=None):
+        class_translation = {"fi": "Fighter",
+                             "co": "Corvette",
+                             "fr": "Frigate",
+                             "de": "Destroyer",
+                             "cr": "Cruiser",
+                             "bs": "Battleship"}
 
-            bcalc += "%s_%d_%d=%d&" % (
-                ("att", "def",)[target], planetNumber, unitscan.ship_id - 1, unitscan.amount,)
+        for unitscan in self.units:
+            if clazz is None or (clazz.lower() in self.class_translation.keys() and unitscan.ship.class_ == class_translation[clazz]):
+                bcalc += "%s_%d_%d=%d&" % (
+                    ("att", "def",)[target], planetnumber, unitscan.ship_id - 1, unitscan.amount,)
         bcalc += "%s_planet_value_%d=%d&" % (
-            ("att", "def",)[target], planetNumber, self.planet.value,)
+            ("att", "def",)[target], planetnumber, self.planet.value,)
         bcalc += "%s_planet_score_%d=%d&" % (
-            ("att", "def",)[target], planetNumber, self.planet.score,)
-        bcalc += "%s_coords_x_%d=%d&" % (("att", "def",)[target], planetNumber, self.planet.x,)
-        bcalc += "%s_coords_y_%d=%d&" % (("att", "def",)[target], planetNumber, self.planet.y,)
-        bcalc += "%s_coords_z_%d=%d&" % (("att", "def",)[target], planetNumber, self.planet.z,)
+            ("att", "def",)[target], planetnumber, self.planet.score,)
+        bcalc += "%s_coords_x_%d=%d&" % (("att", "def",)[target], planetnumber, self.planet.x,)
+        bcalc += "%s_coords_y_%d=%d&" % (("att", "def",)[target], planetnumber, self.planet.y,)
+        bcalc += "%s_coords_z_%d=%d&" % (("att", "def",)[target], planetnumber, self.planet.z,)
         if target:
             pscan = self.planet.scan("P")
             if pscan and pscan.planetscan.size == self.planet.size:

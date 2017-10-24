@@ -20,8 +20,8 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 import re
-import tinyurl
 
+import tinyurl
 from Core.config import Config
 from Core.loadable import loadable, route, require_user
 from Core.maps import Updates, Planet
@@ -30,25 +30,26 @@ from Core.maps import Updates, Planet
 class lazycalc(loadable):
     usage = " x:y:z x2:y2:z2"
 
-    @route(r"([. :\-\d,]+)", access="half")
+    @route(r"([. :\-\d,]+)\s+(\S+)", access="half")
     @require_user
     def execute(self, message, user, params):
         tick = Updates.current_tick()
         url = Config.get("URL", "bcalc")
         i = 1
-        for coord in re.findall(loadable.coord, params.group(0)):
+        coords, clazz = params.groups()
+        for coord in re.findall(loadable.coord, coords):
             print url
             planet = Planet.load(coord[0], coord[2], coord[4])
             if planet:
                 scan = planet.scan("A")
 
                 if scan and (int(tick) <= scan.tick + 12):
-                    print "scan found and has correct tick"
-                    url = scan.addPlanetToCalc(url, False, i)
+                    url = scan.addPlanetToCalc(url, False, i, clazz)
                 else:
                     message.reply("Missing a scan for %d:%d:%d" % (
                         planet.x, planet.y, planet.z))
                     break
             i = i + 1
 
-        message.reply("Calc: %s" % (tinyurl.create_one("%s&att_fleets=%d" % (url, i-1))))
+        message.reply("Calc: %s" % (
+        tinyurl.create_one("%s&att_fleets=%d" % (url, i - 1))))
