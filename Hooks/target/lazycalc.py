@@ -38,7 +38,6 @@ class lazycalc(loadable):
         i = 1
         coords, clazz = params.groups()
         for coord in re.findall(loadable.coord, coords):
-            print url
             planet = Planet.load(coord[0], coord[2], coord[4])
             if planet:
                 scan = planet.scan("A")
@@ -48,7 +47,7 @@ class lazycalc(loadable):
                 else:
                     message.reply("Missing a scan for %d:%d:%d" % (
                         planet.x, planet.y, planet.z))
-                    break
+                    return
             i = i + 1
 
         message.reply("Calc: %s" % (

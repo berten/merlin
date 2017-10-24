@@ -1721,9 +1721,12 @@ class Scan(Base):
                              "bs": "Battleship"}
 
         for unitscan in self.units:
-            if clazz is None or (clazz.lower() in self.class_translation.keys() and unitscan.ship.class_ == class_translation[clazz]):
+            if clazz is None or (clazz.lower() in class_translation.keys()
+                        and unitscan.ship.class_ == class_translation[clazz]):
                 bcalc += "%s_%d_%d=%d&" % (
-                    ("att", "def",)[target], planetnumber, unitscan.ship_id - 1, unitscan.amount,)
+                    ("att", "def",)[target], planetnumber,
+                    unitscan.ship_id - 1, unitscan.amount,)
+
         bcalc += "%s_planet_value_%d=%d&" % (
             ("att", "def",)[target], planetnumber, self.planet.value,)
         bcalc += "%s_planet_score_%d=%d&" % (
