@@ -1057,6 +1057,14 @@ class Alliance(Base):
         Q = Q.filter(Intel.alliance == self)
         Q = Q.filter(Planet.active == True)
         return Q.count()
+
+    @property
+    def intel_planets(self):
+        Q = session.query(Planet)
+        Q = Q.join(Planet.intel)
+        Q = Q.filter(Intel.alliance == self)
+        Q = Q.filter(Planet.active == True)
+        return Q.all()
     
     def __str__(self):
         retstr="'%s' Members: %s (%s) " % (self.name,self.members,self.members_rank)
