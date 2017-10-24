@@ -20,7 +20,7 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 from Core.loadable import loadable, route, require_user
-from Core.maps import Alliance
+from Core.maps import Alliance, Updates
 
 
 class stock(loadable):
@@ -32,11 +32,12 @@ class stock(loadable):
         alliance = Alliance.load(params.group(1)) if params.group(1) is not None else None
         resources = 0
         scansneeded = ""
+        tick = Updates.current_tick()
         # Alliance
         if alliance is not None:
             for planet in alliance.intel_planets:
                 scan = planet.scan("P")
-                if scan:
+                if scan and (int(tick) <= scan.tick + 12):
                     resources += scan.planetscan.res_metal + scan.planetscan.res_crystal + scan.planetscan.res_eonium
                 else:
                     scansneeded += "%d:%d:%d " % (planet.x, planet.y, planet.z)
