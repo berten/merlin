@@ -29,6 +29,12 @@ from Core.maps import Updates, Planet
 
 class lazycalc(loadable):
     usage = " x:y:z x2:y2:z2"
+    class_translation = {"fi": "Fighter",
+                     "co": "Corvette",
+                     "fr": "Frigate",
+                     "de": "Destroyer",
+                     "cr": "Cruiser",
+                     "bs": "Battleship"}
 
     @route(r"([. :\-\d,]+)\s+(\S+)", access="half")
     @require_user
@@ -43,7 +49,7 @@ class lazycalc(loadable):
                 scan = planet.scan("A")
 
                 if scan and (int(tick) <= scan.tick + 12):
-                    url = scan.addPlanetToCalc(url, False, i, clazz)
+                    url = scan.addPlanetToCalc(url, False, i, self.class_translation[clazz] if clazz in self.class_translation.keys() else None)
                 else:
                     message.reply("Missing a scan for %d:%d:%d" % (
                         planet.x, planet.y, planet.z))

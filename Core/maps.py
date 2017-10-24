@@ -1713,16 +1713,9 @@ class Scan(Base):
         return self.addPlanetToCalc(Config.get("URL", "bcalc"), target, 1)
 
     def addPlanetToCalc(self, bcalc, target, planetnumber, clazz=None):
-        class_translation = {"fi": "Fighter",
-                             "co": "Corvette",
-                             "fr": "Frigate",
-                             "de": "Destroyer",
-                             "cr": "Cruiser",
-                             "bs": "Battleship"}
 
         for unitscan in self.units:
-            if clazz is None or (clazz.lower() in class_translation.keys()
-                        and unitscan.ship.class_ == class_translation[clazz]):
+            if clazz is None or unitscan.ship.class_ == clazz:
                 bcalc += "%s_%d_%d=%d&" % (
                     ("att", "def",)[target], planetnumber,
                     unitscan.ship_id - 1, unitscan.amount,)
