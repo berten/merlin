@@ -32,4 +32,5 @@ __all__ = [
            "seagal",
            "tick",
            "bonus",
+            "stock",
            ]
