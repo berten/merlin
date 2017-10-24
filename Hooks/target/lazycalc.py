@@ -28,7 +28,7 @@ from Core.maps import Updates, Planet
 
 
 class lazycalc(loadable):
-    usage = " x:y:z x2:y2:z2"
+    usage = " <coords> <fi|co|fr|de|cr|bs>"
     class_translation = {"fi": "Fighter",
                      "co": "Corvette",
                      "fr": "Frigate",
