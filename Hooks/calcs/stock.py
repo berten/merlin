@@ -34,10 +34,10 @@ class stock(loadable):
         scansneeded = ""
         # Alliance
         if alliance is not None:
-            for planet in alliance.intel_planets():
+            for planet in alliance.intel_planets:
                 scan = planet.scan("P")
                 if scan:
-                    resources += scan.metal + scan.crystal + scan.eonium
+                    resources += scan.planetscan.res_metal + scan.planetscan.res_crystal + scan.planetscan.res_eonium
                 else:
                     scansneeded += "%d:%d:%d " % (planet.x, planet.y, planet.z)
             message.reply("Stocked resources: %d Added value: %d Need scans for (%s)" %(resources, int(round((resources / 100) - (resources / 150))), scansneeded))
