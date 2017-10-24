@@ -36,7 +36,7 @@ class lazycalc(loadable):
                      "cr": "Cruiser",
                      "bs": "Battleship"}
 
-    @route(r"([. :\-\d,]+)\s+(\S+)", access="half")
+    @route(r"([. :\-\d,]+)\s+([a-zA-Z]+)", access="half")
     @require_user
     def execute(self, message, user, params):
         tick = Updates.current_tick()
